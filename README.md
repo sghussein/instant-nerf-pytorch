@@ -1,29 +1,52 @@
-# instant-nerf-pytorch
+The implementation supports automatic differentiation for functions defined by many intrinstic operators.
 
-This is **WORK IN PROGRESS**, please feel free to contribute via pull request.
-
-We are trying to make NeRF train super fast in pytorch by using pytorch bindings for Instant-NGP.
-
-## Current Progress:
- - Code is implemented and runs, but cannot achieve super good results.
- - Per iteration it is ~3.5x faster than the nerf-pytorch code it is built upon.
- - VERY quickly (1 min) gets up to ~20 PSNR (this is MUCH faster, even in iteration count than the normal NeRF).
- - But doesn't really get above ~25 PSNR even when training for a long time.
- - There is a bug where running the 'fine' network doesn't work, results above are only for coarse network (e.g. N_importance = 0), and speed comparisons also to only course network, this might be the reason the PSNR doesn't get super high.
-
-## How to get running:
-1. Install tiny-cuda-nn (https://github.com/NVlabs/tiny-cuda-nn).
-2. Download, install dependencies and run this code.
-
-## Links to sources:
- - The code is based upon nerf-pytorch (https://github.com/yenchenlin/nerf-pytorch).
- - We are trying to make this faster, by replacing the torch MLP and Pos_enc with those from tiny-cuda-nn (https://github.com/NVlabs/tiny-cuda-nn).
- - This should then become a pytorch version of the (cuda) code for Instant-NGP (https://github.com/NVlabs/instant-ngp)
-
-## Authors:
- - Jonathon Luiten
- - Kangle Deng
+|               | operator |   method |            
+| :------------- | :-------------: | -------------: | 
+| unary positive  | + | \_\_pos\_\_()  |  
+| unary negative  | - | \_\_neg\_\_()  |
+| addition        | + | \_\_add\_\_()  | 
+| subtraction     | - | \_\_sub\_\_()  |
+| multiplication  | * | \_\_mul\_\_()  |
+| division        | / | \_\_truediv\_\_()  |
+| exponentiation  | **| \_\_pow\_\_()  |
+| less than       | < | \_\_lt\_\_()   |
+| greater than    | > | \_\_gt\_\_()   |
+| less than or equal to     | <= | \_\_le\_\_()  |
+| greater than or equal to  | >= | \_\_ge\_\_()  |
+| is equal                  | == | \_\_eq\_\_()  |
+| is not equal              | != | \_\_ne\_\_()  |
 
 
-## Notes:
-Specify `--backbone ngp` to enable Instant-NGP (already done in `configs/fern_ngp.txt`).
+
+The module Elementary will implement the various elementary functions needed for the project, and for that we will use numpy. Each elementary function will thus call the corresponding function from numpy if there is already an implementation in it, otherwise we will implement it manually. We will also consider different cases for the input (if the input is a dual number, or if it is not a dual number). 
+
+|                            |                |        
+| :-------------             | -------------: |
+| Trigonometric              | sin, cos, tan, arcsin, arccos, and arctan |
+| Hyperbolic Trigonometric   | sinh, cosh, tanh, arcsinh, arccosh, and arctanh | 
+| Exponential                | exp, sqrt,ln, $log_2, log_{10}$  |
+
+
+
+NumPy Elementary Mathematical Functions
+These mathematical functions takes a single array of any dimension as input and returns a new array of the same shape.
+
+Functions	Description
+np.cos(), np.sin(), np.tan()	Trigonometric functions.
+np.arccos(), np.arcsin(), np.arctan()	Inverse trigonometric functions.
+np.cosh(), np.sinh(), np.tanh()	Hyperbolic trigonometric functions.
+np.arccosh(), np.arcsinh(), np.arctanh()	Inverse hyperbolic trigonometric unctions.
+np.sqrt()	Square root.
+np.exp()	Exponential.
+np.log(), np.log2(), np.log10()	Logarithms of base e, 2, and 10, respectively.
+
+- sin()
+- cos()
+- tan()
+- log()
+- sqrt()
+- exp()
+- sinh()
+- cosh()
+- tanh()
+
